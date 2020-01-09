@@ -1,12 +1,24 @@
 var http = require('http');
 var formidable = require('formidable');
 const csv = require('csv-parser');
-const fs = require('fs');
+var path = require('path');
+var fs = require('fs');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 console.log(process.env.PORT);
 
 http.createServer(function (req, res) {
-    if (req.url == '/fileupload') {
+    if (req.url == '/file') {
+        var file = __dirname + '/out.csv';
+
+        var filename = path.basename(file);
+ 
+      
+        res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+        res.setHeader('Content-type', 'text/csv');
+      
+        var filestream = fs.createReadStream(file);
+        filestream.pipe(res);
+    } else if (req.url == '/fileupload') {
         const form = new formidable.IncomingForm();
         const data = [];
         const header = [];
